@@ -1,0 +1,4 @@
+[id] [warehouse_id] [employee_id] [address] [profit] 
+[2979] [3900] [102] [Something 14 street, Kazan, Republic of Tatarstan] [0.00] 
+[2980] [3901] [100] [Something 15 street, Kazan, Republic of Tatarstan] [35000.00] 
+[2981] [3900] [103] [Something 16 street, Kazan, Republic of Tatarstan] [0.00] 

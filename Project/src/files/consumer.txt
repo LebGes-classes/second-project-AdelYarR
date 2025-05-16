@@ -1,0 +1,3 @@
+[id] [fullname] [phone_number] 
+[42] [Michael Jackson] [89438527943] 
+[43] [Dani California] [89325475867] 

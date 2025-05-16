@@ -1,0 +1,5 @@
+[id] [storage_id] [fullname] [phone_number] [job] [is_working] 
+[100] [3901] [Robert Brown] [89274238956] [Super WarehouseLoader] [1] 
+[101] [3901] [Nikita Bazaev] [89254646468] [Warehouse Assembler-Picker] [1] 
+[102] [3901] [Noname Nonamev] [89546463563] [Warehouse Manager] [1] 
+[103] [3900] [Test Testov] [89324245222] [Warehouse Director] [1] 
