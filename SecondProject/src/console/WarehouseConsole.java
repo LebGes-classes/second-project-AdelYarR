@@ -21,6 +21,7 @@ public class WarehouseConsole {
         try {
             // Парсинг данных из txt файлов
             ArrayList<Warehouse> warehouses = WarehouseParser.parse();
+            ArrayList<Cell> cells = CellParser.parse();
             ArrayList<Employee> employees = EmployeeParser.parse();
 
             // Генерация ID для склада
@@ -47,13 +48,38 @@ public class WarehouseConsole {
                 return;
             }
 
+            // Запрос количества ячеек
+            System.out.println("Enter number of cells: ");
+            int amount = scanner.nextInt();
+            scanner.nextLine();
+
+            if (amount <= 0) {
+                System.out.println("Enter a positive number.\nPress any key to return: ");
+                return;
+            }
+
             // Создание нового склада
             Warehouse warehouse = new Warehouse(warehouseId, employeeId, address);
             warehouses.add(warehouse);
 
+            // Поиск максимального ID ячейки
+            int maxCellId = cells.isEmpty()
+                    ? 1
+                    : cells.stream()
+                    .mapToInt(Cell::getId)
+                    .max()
+                    .orElse(0) + 1;
+
+            for (int i = 0; i < amount; i++) {
+                maxCellId++;
+                Cell cell = new Cell(maxCellId, warehouseId, 0, 100, 0);
+                cells.add(cell);
+            }
+
             // Сохранение изменений в txt файлы
             boolean isSerialized = WarehouseParser.serialize(warehouses);
-            if (isSerialized) {
+            boolean isCellSerialized = CellParser.serialize(cells);
+            if (isSerialized && isCellSerialized) {
                 System.out.println("Warehouse with the ID: " + warehouseId + " was successfully opened.\nPress any key to return: ");
             } else {
                 System.out.println("Error has occurred while serializing data.\nPress any key to return: ");
@@ -102,12 +128,24 @@ public class WarehouseConsole {
                 return;
             }
 
-            // Удаление склада из списка всех складов
             warehouses.remove(currWarehouse);
+
+            ArrayList<Cell> cellsToRemove = new ArrayList<>();
+            for (Cell cell : cells) {
+                if (cell.getStorageId() == warehouseId) {
+                    cellsToRemove.add(cell);
+                }
+            }
+
+            // Удаление пустых ячеек
+            for (Cell cell : cellsToRemove) {
+                cells.remove(cell);
+            }
 
             // Сохранение изменений в txt файлы
             boolean isSerialized = WarehouseParser.serialize(warehouses);
-            if (isSerialized) {
+            boolean isCellSerialized = CellParser.serialize(cells);
+            if (isSerialized && isCellSerialized) {
                 System.out.println("Warehouse with the ID: " + warehouseId + " was successfully closed.\nPress any key to return: ");
             } else {
                 System.out.println("Error has occurred while serializing data.\nPress any key to return: ");

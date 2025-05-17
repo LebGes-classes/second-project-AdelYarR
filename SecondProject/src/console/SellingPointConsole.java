@@ -22,6 +22,7 @@ public class SellingPointConsole {
             // Парсинг данных из txt файлов
             ArrayList<SellingPoint> sellingPoints = SellingPointParser.parse();
             ArrayList<Warehouse> warehouses = WarehouseParser.parse();
+            ArrayList<Cell> cells = CellParser.parse();
             ArrayList<Employee> employees = EmployeeParser.parse();
 
             // Генерация ID для пункта продаж
@@ -60,13 +61,38 @@ public class SellingPointConsole {
                 return;
             }
 
+            // Запрос количества ячеек
+            System.out.println("Enter number of cells: ");
+            int amount = scanner.nextInt();
+            scanner.nextLine();
+
+            if (amount <= 0) {
+                System.out.println("Enter a positive number.\nPress any key to return: ");
+                return;
+            }
+
             // Создание нового пункта продаж
             SellingPoint sellingPoint = new SellingPoint(sellingPointId, warehouseId, employeeId, address, 0.00);
             sellingPoints.add(sellingPoint);
 
+            // Поиск максимального ID ячейки
+            int maxCellId = cells.isEmpty()
+                    ? 1
+                    : cells.stream()
+                    .mapToInt(Cell::getId)
+                    .max()
+                    .orElse(0) + 1;
+
+            for (int i = 0; i < amount; i++) {
+                maxCellId++;
+                Cell cell = new Cell(maxCellId, sellingPointId, 0, 100, 0);
+                cells.add(cell);
+            }
+
             // Сохранение изменений в txt файлы
             boolean isSerialized = SellingPointParser.serialize(sellingPoints);
-            if (isSerialized) {
+            boolean isCellSerialized = CellParser.serialize(cells);
+            if (isSerialized && isCellSerialized) {
                 System.out.println("Selling point with the ID: " + sellingPointId + " was successfully opened.\nPress any key to return: ");
             } else {
                 System.out.println("Error has occurred while serializing data.\nPress any key to return: ");
@@ -117,8 +143,21 @@ public class SellingPointConsole {
             // Удаление пункта продаж
             sellingPoints.remove(currSellingPoint);
 
+            ArrayList<Cell> cellsToRemove = new ArrayList<>();
+            for (Cell cell : cells) {
+                if (cell.getStorageId() == sellingPointId) {
+                    cellsToRemove.add(cell);
+                }
+            }
+
+            // Удаление пустых ячеек
+            for (Cell cell : cellsToRemove) {
+                cells.remove(cell);
+            }
+
             // Сохранение изменений в txt файлы
             boolean isSerialized = SellingPointParser.serialize(sellingPoints);
+            boolean isCellSerialized = CellParser.serialize(cells);
             if (isSerialized) {
                 System.out.println("Selling point with the ID: " + sellingPointId + " was successfully closed.\nPress any key to return: ");
             } else {
